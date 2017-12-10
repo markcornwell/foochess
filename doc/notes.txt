@@ -1,0 +1,391 @@
+Notes on Haskell
+
+This journal records my notes on working with Haskell.
+
+Tue Nov 21 17:47:50 EST 2017
+
+Objective: Get the cabal package manager running
+
+https://wiki.haskell.org/Cabal/How_to_install_a_Cabal_package
+
+epiphany:hs mark$ ls
+Guess.hs	Name.hs		Test.hi		Test.o		test
+Name.hi		Name.o		Test.hs		name
+epiphany:hs mark$ cabal update
+Warning: /Users/mark/.cabal/config: Unrecognized stanza on line 105
+/Users/mark/.cabal/config: Unrecognized stanza on line 28
+Warning: No remote package servers have been specified. Usually you would have
+one specified in the config file.
+
+http://hackage.haskell.org/
+
+renamed all my directories for .cabal and /Library/Haskell
+
+Then went to www.haskell.org and chose Downloaded Full (64 bit) Max OS X version of Haskell Platform.
+
+Using the Haskell Platform 8.2.1. Installer.
+
+Realies on XCode.  I should verify that those are updated to current versions.
+
+https://www.haskell.org/platform/mac.html
+
+Last login: Mon Nov 20 19:13:08 on ttys000
+epiphany:~ mark$ ls
+?			Public			git
+3166.sh			Share			hello.txt
+Applications		Sites			hello.xml
+Archive			ZipCloud.exe		hs
+CHECKOUT-BOOTSTRAP	a.out			lnx64
+Chess Database		bankscripts.sh		local_sites
+Desktop			bin			makefile
+Documents		bu_silent4.dmg		nchess
+Downloads		cabal.old		pilar
+Dropbox			chess			reb
+Library			chess.wrk		tg1.sql
+Movies			chess_automata		tmp
+Music			cl			tmp2
+Pictures		distorm-read-only
+epiphany:~ mark$ cabal --help
+Command line interface to the Haskell Cabal infrastructure.
+
+See http://www.haskell.org/cabal/ for more information.
+
+Usage: cabal [GLOBAL FLAGS] [COMMAND [FLAGS]]
+
+Commands:
+ [global]
+  update           Updates list of known packages.
+  install          Install packages.
+
+  help             Help about commands.
+  info             Display detailed information about a particular package.
+  list             List packages matching a search string.
+  fetch            Downloads packages for later installation.
+  user-config      Display and update the user's global cabal configuration.
+
+ [package]
+  get              Download/Extract a package's source code (repository).
+  init             Create a new .cabal package file (interactively).
+
+  configure        Prepare to build the package.
+  build            Compile all/specific components.
+  clean            Clean up after a build.
+
+  run              Builds and runs an executable.
+  repl             Open an interpreter session for the given component.
+  test             Run all/specific tests in the test suite.
+  bench            Run all/specific benchmarks.
+
+  check            Check the package for common mistakes.
+  sdist            Generate a source distribution file (.tar.gz).
+  upload           Uploads source packages or documentation to Hackage.
+  report           Upload build reports to a remote server.
+
+  freeze           Freeze dependencies.
+  gen-bounds       Generate dependency bounds.
+  outdated         Check for outdated dependencies
+  doctest          Run doctest tests.
+  haddock          Generate Haddock HTML documentation.
+  hscolour         Generate HsColour colourised code, in HTML format.
+  copy             Copy the files of all/specific components to install locations.
+  register         Register this package with the compiler.
+  reconfigure      Reconfigure the package if necessary.
+
+ [sandbox]
+  sandbox          Create/modify/delete a sandbox.
+  exec             Give a command access to the sandbox package repository.
+  repl             Open interpreter with access to sandbox packages.
+
+ [new-style projects (beta)]
+  new-build        Compile targets within the project.
+  new-configure    Add extra project configuration
+  new-repl         Open an interactive session for the given component.
+  new-run          Run an executable.
+  new-test         Run test-suites
+  new-bench        Run benchmarks
+  new-freeze       Freeze dependencies.
+  new-haddock      Build Haddock documentation
+
+For more information about a command use:
+   cabal COMMAND --help
+or cabal help COMMAND
+
+To install Cabal packages from hackage use:
+  cabal install foo [--dry-run]
+
+Occasionally you need to update the list of available packages:
+  cabal update
+
+Global flags:
+ -h --help                         Show this help text
+ -V --version                      Print version information
+    --numeric-version              Print just the version number
+    --config-file=FILE             Set an alternate location for the config
+                                   file
+    --sandbox-config-file=FILE     Set an alternate location for the sandbox
+                                   config file (default:
+                                   './cabal.sandbox.config')
+    --default-user-config=FILE     Set a location for a cabal.config file for
+                                   projects without their own cabal.config
+                                   freeze file.
+    --require-sandbox              Enable requiring the presence of a sandbox
+                                   for sandbox-aware commands
+    --no-require-sandbox           Disable requiring the presence of a sandbox
+                                   for sandbox-aware commands
+    --ignore-sandbox               Ignore any existing sandbox
+    --ignore-expiry                Ignore expiry dates on signed metadata (use
+                                   only in exceptional circumstances)
+    --http-transport=HttpTransport Set a transport for http(s) requests.
+                                   Accepts 'curl', 'wget', 'powershell', and
+                                   'plain-http'. (default: 'curl')
+    --enable-nix                   Enable Nix integration: run commands through
+                                   nix-shell if a 'shell.nix' file exists
+    --disable-nix                  Disable Nix integration: run commands
+                                   through nix-shell if a 'shell.nix' file
+                                   exists
+
+You can edit the cabal configuration file to set defaults:
+  /Users/mark/.cabal/config
+This file will be generated with sensible defaults if you run 'cabal update'.
+epiphany:~ mark$ ls /Library/Haskell
+bin			doc
+current			ghc-8.2.1-x86_64
+epiphany:~ mark$ ls /Library/Frameworks/GHC.framework/
+Resources	Versions
+epiphany:~ mark$ ls
+?			Public			git
+3166.sh			Share			hello.txt
+Applications		Sites			hello.xml
+Archive			ZipCloud.exe		hs
+CHECKOUT-BOOTSTRAP	a.out			lnx64
+Chess Database		bankscripts.sh		local_sites
+Desktop			bin			makefile
+Documents		bu_silent4.dmg		nchess
+Downloads		cabal.old		pilar
+Dropbox			chess			reb
+Library			chess.wrk		tg1.sql
+Movies			chess_automata		tmp
+Music			cl			tmp2
+Pictures		distorm-read-only
+epiphany:~ mark$ cabal update
+Config file path source is default config file.
+Config file /Users/mark/.cabal/config not found.
+Writing default configuration to /Users/mark/.cabal/config
+Downloading the latest package list from hackage.haskell.org
+epiphany:~ mark$
+
+epiphany:~ mark$ pwd
+/Users/mark
+epiphany:~ mark$ cd hs
+epiphany:hs mark$ ls
+Guess.hs	Name.hs		Test.hi		Test.o		notes.txt
+Name.hi		Name.o		Test.hs		name		test
+epiphany:hs mark$ stack repl
+Configuring GHCi with the following packages: 
+GHCi, version 8.0.2: http://www.haskell.org/ghc/  :? for help
+Loaded GHCi configuration from /private/var/folders/81/005df0sd2271jxcdsk39kbbw0000gn/T/ghci24726/ghci-script
+Prelude> 
+Leaving GHCi.
+epiphany:hs mark$
+
+epiphany:hs mark$ stack install random
+[1 of 2] Compiling Main             ( /Users/mark/.stack/setup-exe-src/setup-mPHDZzAJ.hs, /Users/mark/.stack/setup-exe-src/setup-mPHDZzAJ.o )
+[2 of 2] Compiling StackSetupShim   ( /Users/mark/.stack/setup-exe-src/setup-shim-mPHDZzAJ.hs, /Users/mark/.stack/setup-exe-src/setup-shim-mPHDZzAJ.o )
+Linking /Users/mark/.stack/setup-exe-cache/x86_64-osx/tmp-Cabal-simple_mPHDZzAJ_1.24.2.0_ghc-8.0.2 ...
+random-1.1: download
+random-1.1: configure
+random-1.1: build
+random-1.1: copy/register
+epiphany:hs mark$ stack repl
+Configuring GHCi with the following packages: 
+GHCi, version 8.0.2: http://www.haskell.org/ghc/  :? for help
+Loaded GHCi configuration from /private/var/folders/81/005df0sd2271jxcdsk39kbbw0000gn/T/ghci24935/ghci-script
+Prelude> import System.Random
+Prelude System.Random>
+----------------------------------------------------------------
+epiphany:hs mark$ cat Name.hs
+module Main
+    where
+
+import System.IO
+
+main = do
+  hSetBuffering stdin LineBuffering
+  putStrLn "Please enter your name: "
+  name <- getLine
+  putStrLn ("hello, " ++ name ++ ", how are you")
+
+
+epiphany:hs mark$ ghc --make Name.hs -o name
+epiphany:hs mark$ ./name
+Please enter your name: 
+Mark
+hello, Mark, how are you
+epiphany:hs mark$
+---------------------------------------------------------------
+epiphany:hs mark$ cat Guess.hs
+module Main
+    where
+
+import System.IO
+import System.Random
+
+main = do
+  hSetBuffering stdin LineBuffering
+  num <- randomRIO (1::Int, 100)
+  putStrLn "I'm thinking of a number between 1 and 100"
+  doGuessing num
+
+doGuessing num = do
+  putStrLn "Enter your guess:"
+  guess <- getLine
+  let guessNum = read guess
+  if guessNum < num
+    then do putStrLn "Too low!"
+            doGuessing num
+    else if read guess > num
+           then do putStrLn "Too high!"
+                   doGuessing num
+           else do putStrLn "You win!"
+
+
+epiphany:hs mark$ ghc --make Guess.hs -o guess
+[1 of 1] Compiling Main             ( Guess.hs, Guess.o )
+Linking guess ...
+epiphany:hs mark$ ./guess
+I'm thinking of a number between 1 and 100
+Enter your guess:
+50
+Too high!
+Enter your guess:
+25
+Too high!
+Enter your guess:
+12
+Too low!
+Enter your guess:
+19
+Too high!
+Enter your guess:
+14
+Too low!
+Enter your guess:
+16
+Too high!
+Enter your guess:
+15
+You win!
+epiphany:hs mark$
+-----------------------------------------------------------
+epiphany:hs mark$ stack repl
+Configuring GHCi with the following packages: 
+GHCi, version 8.0.2: http://www.haskell.org/ghc/  :? for help
+Loaded GHCi configuration from /private/var/folders/81/005df0sd2271jxcdsk39kbbw0000gn/T/ghci25040/ghci-script
+Prelude> :l guess
+[1 of 1] Compiling Main             ( guess.hs, interpreted )
+Ok, modules loaded: Main.
+*Main> main
+I'm thinking of a number between 1 and 100
+Enter your guess:
+15
+Too high!
+Enter your guess:
+7
+Too high!
+Enter your guess:
+3
+Too low!
+Enter your guess:
+5
+Too low!
+Enter your guess:
+6
+You win!
+*Main>
+---------------------------------------
+epiphany:hs mark$ stack repl
+Configuring GHCi with the following packages: 
+GHCi, version 8.0.2: http://www.haskell.org/ghc/  :? for help
+Loaded GHCi configuration from /private/var/folders/81/005df0sd2271jxcdsk39kbbw0000gn/T/ghci25082/ghci-script
+Prelude> :t 'c'
+'c' :: Char
+Prelude> 
+----------------------------------------
+epiphany:hs mark$ stack repl
+Configuring GHCi with the following packages: 
+GHCi, version 8.0.2: http://www.haskell.org/ghc/  :? for help
+Loaded GHCi configuration from /private/var/folders/81/005df0sd2271jxcdsk39kbbw0000gn/T/ghci25082/ghci-script
+Prelude> :t 'c'
+'c' :: Char
+Prelude> :t "hello"
+"hello" :: [Char]
+Prelude> :t 'a' == 'b'
+'a' == 'b' :: Bool
+Prelude> :t 'a' == "a"
+
+<interactive>:1:8: error:
+    • Couldn't match expected type ‘Char’ with actual type ‘[Char]’
+    • In the second argument of ‘(==)’, namely ‘"a"’
+      In the expression: 'a' == "a"
+Prelude>
+----------------------------------
+Prelude> :t 5 :: Int
+5 :: Int :: Int
+Prelude> :t 5 :: Double
+5 :: Double :: Double
+Prelude> 
+----------------------------------
+Prelude> :t 5
+5 :: Num t => t
+Prelude>
+----------------------------------
+Prelude> tail [5,6,7,8,9]
+[6,7,8,9]
+Prelude> tail "hello"
+"ello"
+Prelude> tail ["the","man","is","happy"]
+["man","is","happy"]
+Prelude> :t fst
+fst :: (a, b) -> a
+Prelude>
+-----------------------------------
+Prelude> :t snd
+snd :: (a, b) -> b
+Prelude> :t head
+head :: [a] -> a
+Prelude> :t null
+null :: Foldable t => t a -> Bool
+Prelude> :t head . tail
+head . tail :: [c] -> c
+Prelude> :t head . head
+head . head :: [[c]] -> c
+Prelude> 
+------------------------------------
+In fact, Haskell is largely based on an extension of the lambda calculus, and these
+two expressions can be written directly in Haskell (we simply replace the λ with a
+backslash and the . with an arrow; also we don’t need to repeat the lambdas; and, of
+course, in Haskell we In fact, Haskell is largely based on an extension of the lambda calculus, and these
+two expressions can be written directly in Haskell (we simply replace the λ with a
+backslash and the . with an arrow; also we don’t need to repeat the lambdas; and, of
+course, in Haskell we have to give them names if we’re defining functions):have to give them names if we’re defining functions):
+square = \x -> x*x
+f = \x y -> 2*x + y
+You can also evaluate lambda expressions in your interactive shell:
+Prelude> (\x -> x*x) 5
+25
+Prelude> (\x y -> 2*x + y) 5 4
+14
+We can see in the second example that we need to give the lambda abstraction two
+arguments, one corresponding to x and the other corresponding to y.
+----------------------------------------
+Prelude> encode f r = (r-1)*8 + f
+Prelude> encode a 1
+1
+Prelude> encode e 1
+5
+Prelude> encode h 8
+64
+Prelude>
+-----------------------------------------
+
+
