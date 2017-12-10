@@ -5,6 +5,8 @@
 --                                      Mark R. Cornwell
 --                                      December 1, 2017
 --
+----                          http://github.com/markcornwell/foochess
+--
 -- ---------------------------------------------------------------------------------------
 --    $ ghc -O square
 --    $ ./square
@@ -20,15 +22,37 @@
 --    Welcome to Haskell Chess!
 --    White to move; may I suggest e2e4?
 -- ---------------------------------------------------------------------------------------
+--
 
-module Main
+--
+------------------------------------------------------------------------------------------
+--                                            TBD
+------------------------------------------------------------------------------------------
+-- [12/3] Static score   
+-- [12/3] Minimax search
+-- [12/3] Command Loop
+-- [12/4] Alphabeta search  (In Work)
+-- [12/10] Separate modules for core engine from command loop and tests
+-- [  ] Pawn promotion (simplified)
+-- [  ] Pawn promotion (complete)
+-- [  ] Castling
+-- [  ] En Passant
+-- [  ] Checkmate
+-- [  ] Stalemate
+-- [  ] KMoves/Sec Metric
+-- [  ] Think while waiting
+-- [  ] Itterative deepening
+------------------------------------------------------------------------------------------
+
+-- module Main
+module Square
 
 where
 
 import Data.Char
-import Control.Monad
-import System.IO
-import Data.Tree
+--import Control.Monad
+--import System.IO
+--import Data.Tree
 
 ------------------------------------------------------------------------------------------
 -- Square Geometry
@@ -55,12 +79,21 @@ rsq t = sqr (ord (head t) - ord 'a') (ord (head (tail t)) - ord '1')
 
 -- Numbering the squares on the chessboard
 
-a8 = 56; b8 = 57; c8 = 58; d8 = 59; e8 = 60; f8 = 61; g8 = 62; h8 = 63;
-a7 = 48; b7 = 49; c7 = 50; d7 = 51; e7 = 52; f7 = 53; g7 = 54; h7 = 55;
-a6 = 40; b6 = 41; c6 = 42; d6 = 43; e6 = 44; f6 = 45; g6 = 46; h6 = 47;
-a5 = 32; b5 = 33; c5 = 34; d5 = 35; e5 = 36; f5 = 37; g5 = 38; h5 = 39;
-a4 = 24; b4 = 25; c4 = 26; d4 = 27; e4 = 28; f4 = 29; g4 = 30; h4 = 31;
-a3 = 16; b3 = 17; c3 = 18; d3 = 19; e3 = 20; f3 = 21; g3 = 22; h3 = 23;
+a8::Int; b8::Int; c8::Int; d8::Int; e8::Int; f8::Int; g8::Int; h8::Int
+a7::Int; b7::Int; c7::Int; d7::Int; e7::Int; f7::Int; g7::Int; h7::Int
+a6::Int; b6::Int; c6::Int; d6::Int; e6::Int; f6::Int; g6::Int; h6::Int
+a5::Int; b5::Int; c5::Int; d5::Int; e5::Int; f5::Int; g5::Int; h5::Int
+a4::Int; b4::Int; c4::Int; d4::Int; e4::Int; f4::Int; g4::Int; h4::Int
+a3::Int; b3::Int; c3::Int; d3::Int; e3::Int; f3::Int; g3::Int; h3::Int
+a2::Int; b2::Int; c2::Int; d2::Int; e2::Int; f2::Int; g2::Int; h2::Int
+a1::Int; b1::Int; c1::Int; d1::Int; e1::Int; f1::Int; g1::Int; h1::Int
+
+a8 = 56; b8 = 57; c8 = 58; d8 = 59; e8 = 60; f8 = 61; g8 = 62; h8 = 63
+a7 = 48; b7 = 49; c7 = 50; d7 = 51; e7 = 52; f7 = 53; g7 = 54; h7 = 55
+a6 = 40; b6 = 41; c6 = 42; d6 = 43; e6 = 44; f6 = 45; g6 = 46; h6 = 47
+a5 = 32; b5 = 33; c5 = 34; d5 = 35; e5 = 36; f5 = 37; g5 = 38; h5 = 39
+a4 = 24; b4 = 25; c4 = 26; d4 = 27; e4 = 28; f4 = 29; g4 = 30; h4 = 31
+a3 = 16; b3 = 17; c3 = 18; d3 = 19; e3 = 20; f3 = 21; g3 = 22; h3 = 23
 a2 = 08; b2 = 09; c2 = 10; d2 = 11; e2 = 12; f2 = 13; g2 = 14; h2 = 15
 a1 = 00; b1 = 01; c1 = 02; d1 = 03; e1 = 04; f1 = 05; g1 = 06; h1 = 07
 
@@ -520,7 +553,7 @@ value side brd = minimax maxDepth side brd
 
 -- value side brd = alphabeta brd maxDepth (minBound::Int) (maxBound::Int) side
 
-maxDepth = 4
+maxDepth = 2
 
 scoreMoves :: Brd -> Color -> [(Int,Move)]
 
@@ -535,289 +568,3 @@ bestScoreMove brd Black = foldl (\x y -> (if (fst x) < (fst y) then x else y)) (
 
 bestMove brd side = mv where (v,mv) = bestScoreMove brd side
 
-------------------------------------------------------------------------------------------
--- User Command Loop
-------------------------------------------------------------------------------------------
-
-main = test31
-
-into = do
-      pBrd brd0     
-      putStrLn "Welcome to Haskell Chess!"
-      putStrLn "White to move; may I suggest e2e4?"
-      command brd0 White
-
-command brd side = do
-     putStr "move? "; hFlush stdout
-     cmd <- getLine
-     putStrLn $ "You typed: " ++ cmd
-     dispatch brd side cmd
-
-dispatch brd side "help" = do putStrLn "[help test show value quit e1e2]"
-                              command brd side
-
-dispatch brd side "test" = do tests
-                              command brd side
-
-dispatch brd side "show" = do
-     pBrd brd
-     putStrLn (show side ++ " to Move")
-     command brd side
-
-dispatch brd side "" = dispatch brd side "show"
-
-dispatch brd side "value" = do putStrLn (show (value side brd))
-                               command brd side
-
-dispatch brd side "quit" = do putStrLn "Exiting command loop..."
-
-dispatch brd side cmd
-     | mv `elem` legals brd side = do putStrLn (show side ++ " moves " ++ cmd)
-                                      pBrd (mvMan brd mv)
-                                      putStrLn ((show (opposite side)) ++ " moves " ++ (pMove (bestMove (mvMan brd mv) (opposite side))))
-                                      pBrd (mvMan (mvMan brd mv) (bestMove (mvMan brd mv) (opposite side)))
-                                      command (mvMan (mvMan brd mv) (bestMove (mvMan brd mv) (opposite side))) side
-     | otherwise                 = do putStrLn (cmd ++ " is NOT a legal move")
-                                      command brd side
-     where mv = rMove cmd
-
-------------------------------------------------------------------------------------------
---                                            TBD
-------------------------------------------------------------------------------------------
--- [12/3] Static score   
--- [12/3] Minimax search
--- [12/3] Command Loop
--- [12/4] Alphabeta search  (In Work)
--- [  ] Pawn promotion (simplified)
--- [  ] Pawn promotion (complete)
--- [  ] Castling
--- [  ] En Passant
--- [  ] Checkmate
--- [  ] Stalemate
--- [  ] KMoves/Sec Metric
--- [  ] Think while waiting
--- [  ] Itterative deepening
-------------------------------------------------------------------------------------------
-
-------------------------------------------------------------------------------------------
---                                           Tests
-------------------------------------------------------------------------------------------
---
--- tests should generate actions that print the expression the expression to
--- be evaluated, the value it should evaluate to and whether it passed or failed.
-------------------------------------------------------------------------------------------
-
-{-
-deftest name e1 e2
-  | e1 == e2 = putStrLn (name ++ ": passed")
-  | otherwise = putStrLn ("name" ++ ": FAILED")
-
-runtests = do
-      test "1" (brd0 == brd0) True
-      test "2" (manAt (mvMan brd0 (e2,e4)) e4) wP
-      test "3" (manAt (mvMan brd0 (e2,e4)) e2) eS
--}
-
-ruy = (mvsMan brd0 [(e2,e4),(e7,e5),(g1,f3),(b8,c6),(f1,b5),(a7,a6)])
-ruy2 = (mvsMan ruy [(b5,a4),(g8,f6),(d2,d4),(d7,d6)])
-ruy3 = (mvsMan ruy2 [(a4,c6)])
-
-brdRK = [(wK,e1),(wR,d1)]
-
-------------------------------------------------------------------------------------------
--- Would like to simplify the crude test implementation below to something that manages
--- individaul test more cleanly along the lines of what I have above.  But I like the
--- infomation it prints and it help me with the key infomation I need to develop
--- incrementally.  E.g. it prints a readable display of the board and relevant values.
--- I want any test scaffolding I put around my tests to be as useful.
-------------------------------------------------------------------------------------------
-
-tests = do
-   pBrd brd0
-   pBrd (mvMan brd0 (e2,e4))
-   pBrd (mvMan (mvMan brd0 (e2,e4)) (b8,c6))
-   pBrd (mvMan (mvMan (mvMan brd0 (e2,e4)) (b8,c6)) (f1,b5))
-   
-   putStrLn "test 2"
-   pBrd (mvsMan brd0 [(e2,e4),(b8,c6),(f1,b5)])
-   
-   putStrLn "test 3"
-   print (pseudo brd0 b1)
-   
-   putStrLn "test 4"
-   print (map pMove (pseudo brd0 b1))
-   
-   putStrLn "test 5"
-   pBrd [(wB,c1)]
-   print (map pMove (pseudo [(wB,c1)] c1))
-   
-   putStrLn "test 6"
-   pBrd [(wB,f4)]
-   print (map pMove (pseudo [(wB,f4)] f4))
-   
-   putStrLn "test 7"
-   pBrd [(wB,f4),(wP,h2),(bB,d6)]
-   print (map pMove (pseudo [(wB,f4),(wP,h2),(bB,d6)] f4))
-   
-   putStrLn "test 8"
-   pBrd brd0
-   print (map pMove (pseudo brd0 c1))
-   
-   putStrLn "test 9"
-   pBrd ruy
-   print (map pMove (pseudo ruy b5))
-   print (map pMove (pseudo ruy f3))
-   print (map pMove (pseudo ruy h1))
-   print (map pMove (pseudo ruy d1))
-   print (map pMove (pseudo ruy c1))
-   print (map pMove (pseudo ruy b1))
-   print (map pMove (pseudo ruy a1))
-   
-   putStrLn "test 10"
-   print (map psq (manOn ruy White))
-   
-   putStrLn "test 11"
-   print (map psq (manOn ruy Black))
-   
-   putStrLn "test 12 - pawns"
-   print (map pMove (pseudo ruy d2))
-   print (map pMove (pseudo ruy e4))
-   print (map pMove (pseudo ruy f2))
-   
-   putStrLn "test 13 - pawn capture"
-   pBrd ruy2
-   print (map pMove (pseudo ruy2 d4))
-   print (map pMove (pseudo ruy2 e5))
-   
-   putStrLn "test 14 - king moves"
-   print (map pMove (pseudo ruy2 e1))
-   print (map pMove (pseudo ruy2 e8))
-   
-   putStrLn "test 15 - white moves"
-   pBrd ruy2
-   print (map pMove (foldl (\acc x -> acc ++ x) [] (map (pseudo ruy2) (manOn ruy2 White))))
-   
-   putStrLn "test 16 - black moves"
-   print (map pMove (foldl (\acc x -> acc ++ x) [] (map (pseudo ruy2) (manOn ruy2 Black))))
-   
-   putStrLn "test 17 - attack"
-   pBrd ruy3
-   print (attacks ruy3 e8 White)
-   print (attacks ruy3 e8 Black)
-   print (attacks ruy3 a1 White)
-   print (attacks ruy3 a1 Black)
-   
-   putStrLn "test 18 - black attack squares"
-   pBrd brd0
-   putStr "Black attacks e4 = "; print (attacks brd0 e4 Black)
-   putStr "White attacks e4 = "; print (attacks brd0 e4 White)
-   putStr "White attacks e3 = "; print (attacks brd0 e3 White)
-   
-   putStrLn "test 19 - black attack squares"
-   pBrd ruy3
-   putStr "White attacks e8 = "; print (attacks ruy3 e8 White)
-   putStr "White attacks d8 = "; print (attacks ruy3 d8 White)
-   putStr "White attacks a8 = "; print (attacks ruy3 a8 White)
-   putStr "White attacks e5 = "; print (attacks ruy3 e5 White)
-   
-   putStrLn "test 20 - check"
-   putStr "White in check ="; print (inCheck ruy3 White)
-   putStr "Black in check ="; print (inCheck ruy3 Black)
-   
-   putStrLn "test 21 - King trials"
-   pBrd [(wK,e1),(bK,e8)]
-   putStr "Trial moves by White = "; print (map pMove (trials [(wK,e1),(bK,e8)] White))
-   putStr "Trial moves by Black = "; print (map pMove (trials [(wK,e1),(bK,e8)] Black))
-   
-   putStrLn "test 21 - King + Queen trials"
-   pBrd brdRK
-   putStr "Trial moves by White = "; print (map pMove (trials brdRK White))
-   pBrd [(wK,e1),(bK,e8),(wQ,d1),(bQ,d8)]
-   putStr "Trial moves by White = "; print (map pMove (trials [(wK,e1),(bK,e8),(wQ,d1),(bQ,d8)] White))
-   putStr "Trial moves by Black = "; print (map pMove (trials [(wK,e1),(bK,e8),(wQ,d1),(bQ,d8)] Black))      
-   pBrd [(wK,e1),(bK,e8)]   
-   pBrd brd0
-   putStr "Trial moves by White = "; print (map pMove (trials brd0 White))
-   
-   putStrLn "test 22 - Black in Check"
-   pBrd ruy3
-   putStrLn "Trial moves by Black = "; print (map pMove (trials ruy3 Black))
-   putStr "Black in check = "; print (inCheck ruy3 Black)
-   putStr "White in check = "; print (inCheck ruy3 White)   
-   putStr "Legal moves by Black = "; print (map pMove (legals ruy3 Black))
-   
-   putStrLn "test 23 - Minimax"
-   pBrd brd0
-   putStr "minimax 0 White brd0 = "; print (minimax 0 White brd0)
-   putStr "minimax 1 White brd0 = "; print (minimax 1 White brd0)
-   
-   putStrLn "test 23 - Minimax sees capture"   
-   let brd23 = [(wK,e1),(bK,e8),(bQ,e2)]
-   pBrd brd23
-   putStr "minimax 0 White brd23 = "; print (minimax 0 White brd23)
-   putStr "minimax 1 White brd23 = "; print (minimax 1 White brd23)
-   putStr "minimax 2 White brd23 = "; print (minimax 2 White brd23)
-   putStr "minimax 3 White brd23 = "; print (minimax 3 White brd23)   
-   putStr "minimax 0 Black brd23 = "; print (minimax 0 Black brd23)
-   putStr "minimax 1 Black brd23 = "; print (minimax 1 Black brd23)
-   putStr "minimax 2 Black brd23 = "; print (minimax 2 Black brd23)
-   putStr "minimax 3 Black brd23 = "; print (minimax 3 Black brd23)
-   
-   putStrLn "test 24 - Scored Moves"
-   let brd24 = [(wK,e1),(bK,e8),(bQ,e2)]
-   pBrd brd24
-   putStr "scoreMoves brd24 White = "; print (map psmv (scoreMoves brd24 White))
-   
-   putStrLn "test 25 - Scored Moves"
-   let brd25 = [(wK,e1),(bK,e8),(bQ,a2)]
-   pBrd brd25
-   putStr "scoreMoves brd25 White = "; print (map psmv (scoreMoves brd25 White))
-   
-   putStrLn "test 26 - Scored Moves"
-   let brd26 = [(wK,e1),(bK,d3),(bQ,a2)]
-   pBrd brd26
-   putStr "scoreMoves brd26 White = "; print (map psmv (scoreMoves brd26 White))
-
-   putStrLn "test 27 - Scored Moves"
-   let brd27 = [(wK,e1),(bK,d3),(bQ,a2),(wN,c3)]
-   pBrd brd27
-   putStr "scoreMoves brd27 White = "; print (map psmv (scoreMoves brd27 White))
-   putStr "bestScoreMove brd27 White = "; print (psmv (bestScoreMove brd27 White))
-   putStr "scoreMoves brd27 Black = "; print (map psmv (scoreMoves brd27 Black))   
-   putStr "bestScoreMove brd27 Black = "; print (psmv (bestScoreMove brd27 Black))
-
-   putStrLn "test 28 - Alphabeta"
-   pBrd brd0
-   putStr "alphabeta brd0 0 (minBound::Int) (maxBound::Int) White = "; print (alphabeta brd0 0 (minBound::Int) (maxBound::Int) White)
-   putStr "alphabeta brd0 1 (minBound::Int) (maxBound::Int) White = "; print (alphabeta brd0 1 (minBound::Int) (maxBound::Int) White)
-   putStr "alphabeta brd0 2 (minBound::Int) (maxBound::Int) White = "; print (alphabeta brd0 2 (minBound::Int) (maxBound::Int) White)
-
-   putStrLn "test 29 - Alphabeta sees capture"   
-   let brd29 = [(wK,e1),(bK,e8),(bQ,e2)]
-   pBrd brd29
-   putStr "alphabeta brd29 0 (minBound::Int) (maxBound::Int) White = "; print (alphabeta brd29 0 (minBound::Int) (maxBound::Int) White)
-   putStr "alphabeta brd29 1 (minBound::Int) (maxBound::Int) White = "; print (alphabeta brd29 1 (minBound::Int) (maxBound::Int) White)
-   putStr "alphabeta brd29 2 (minBound::Int) (maxBound::Int) White = "; print (alphabeta brd29 2 (minBound::Int) (maxBound::Int) White)
-   putStrLn "done"
-
-test30 = do
-   putStrLn "test 30 - Alphabeta in ruy"
-   pBrd ruy3
-   putStr "alphabeta ruy3 0 (minBound::Int) (maxBound::Int) White = "; print (alphabeta ruy3 0 (minBound::Int) (maxBound::Int) White)
-   putStr "alphabeta ruy3 1 (minBound::Int) (maxBound::Int) White = "; print (alphabeta ruy3 1 (minBound::Int) (maxBound::Int) White)
-   putStr "alphabeta ruy3 2 (minBound::Int) (maxBound::Int) White = "; print (alphabeta ruy3 2 (minBound::Int) (maxBound::Int) White)
-   putStr "alphabeta ruy3 3 (minBound::Int) (maxBound::Int) White = "; print (alphabeta ruy3 3 (minBound::Int) (maxBound::Int) White)
-  -- putStr "alphabeta ruy3 4 (minBound::Int) (maxBound::Int) White = "; print (alphabeta ruy3 4 (minBound::Int) (maxBound::Int) White)
-  -- putStr "alphabeta ruy3 5 (minBound::Int) (maxBound::Int) White = "; print (alphabeta ruy3 5 (minBound::Int) (maxBound::Int) White)
-   putStr "alphabeta ruy3 0 (minBound::Int) (maxBound::Int) Black = "; print (alphabeta ruy3 0 (minBound::Int) (maxBound::Int) Black)
-   putStr "alphabeta ruy3 1 (minBound::Int) (maxBound::Int) Black = "; print (alphabeta ruy3 1 (minBound::Int) (maxBound::Int) Black)
-   putStr "alphabeta ruy3 2 (minBound::Int) (maxBound::Int) Black = "; print (alphabeta ruy3 2 (minBound::Int) (maxBound::Int) Black)
-   putStr "alphabeta ruy3 3 (minBound::Int) (maxBound::Int) Black = "; print (alphabeta ruy3 3 (minBound::Int) (maxBound::Int) Black)
-  -- putStr "alphabeta ruy3 4 (minBound::Int) (maxBound::Int) Black = "; print (alphabeta ruy3 4 (minBound::Int) (maxBound::Int) Black)
-  -- putStr "alphabeta ruy3 5 (minBound::Int) (maxBound::Int) Black = "; print (alphabeta ruy3 5 (minBound::Int) (maxBound::Int) Black)
-
-test31 = do
-   putStrLn "test 31 - Mate in 2"
-   let brd31 = [(wK,g1),(wP,f2),(wP,g2),(wP,h2),(bK,e8),(bR,d8),(bR,d7),(wR,d1),(wQ,a1)]
-   pBrd brd31
-   putStr "scoreMoves brd31 Black ="; print (map psmv (scoreMoves brd31 Black))
