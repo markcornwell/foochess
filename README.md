@@ -1,32 +1,35 @@
 # foochess
 A chess engine written in Haskell
 
-REFERENCES
-[1]  http://www.faqs.org/rfcs/rfc3092.html
+## REFERENCES
+[RFC3092]  Etymology of "Foo", 1 April 2001. <http://www.faqs.org/rfcs/rfc3092.html>
 
 
-PREREQUISITES
+## PREREQUISITES
 
-Haskell
+### Glasgow Haskell Compiler
 
-You will need to install Haskell.  Visit http://haskell.org
-and get the Haskell platform installer for your platform.
+You will need the Glorious Glasgow Haskell Compilation System.
+You can download an installer for it from http://haskell.org.
+I had good experiences downloading the Haskell platform installer
+for Mac OS which includes the Cabal package installer.
 Linux, OS X, and Windows are suppored.
 
-USAGE
+
+## USAGE
 
 Once you have haskell installed, you can build and run with
-
+```
 $ ghc -O main.hs square.hs
 $ ./main
-
+```
 To compile and run the test suite use
-
+```
 $ ghc -O test.hs square.hs
 $ ./test
-
-EXAMPLE
-
+```
+## EXAMPLE
+```
 epiphany:foochess mark$ ./main
  bR bN bB bQ bK bB bN bR
  bP bP bP bP bP bP bP bP
@@ -39,7 +42,9 @@ epiphany:foochess mark$ ./main
 |
 Welcome to Haskell Chess!
 White to move; may I suggest e2e4?
-move? 
+move?
+```
+
 
 
 
