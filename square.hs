@@ -135,11 +135,11 @@ mvN s = [x | x <- dfr(fwd s):dfl(fwd s):dfr(rgt s):dbr(rgt s):dbr(bak s):dbl(bak
 
 mvK s = [x | x <- (fwd s):(dfr s):(rgt s):(dbr s):(bak s):(dbl s):(lft s):(dfl s):[] , isq x]
 
-sli dir s l = if isq (dir s) then (dir s) : sli dir (dir s) l else []
+--sli dir s l = if isq (dir s) then (dir s) : sli dir (dir s) l else []
 
-mvB s = (sli dfr s []) ++ (sli dfl s []) ++ (sli dbr s []) ++ (sli dbl s [])
-mvR s = (sli fwd s []) ++ (sli bak s []) ++ (sli rgt s []) ++ (sli lft s [])
-mvQ s = (mvB s) ++ (mvR s)
+--mvB s = (sli dfr s []) ++ (sli dfl s []) ++ (sli dbr s []) ++ (sli dbl s [])
+--mvR s = (sli fwd s []) ++ (sli bak s []) ++ (sli rgt s []) ++ (sli lft s [])
+--mvQ s = (mvB s) ++ (mvR s)
 
 ------------------------------------------------------------------------------------------
 -- Man
