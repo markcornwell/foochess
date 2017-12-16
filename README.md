@@ -2,16 +2,19 @@
 A chess engine written in Haskell
 
 ## REFERENCES
-[1]  http://www.faqs.org/rfcs/rfc3092.html
+[RFC3092]  Etymology of "Foo", 1 April 2001. <http://www.faqs.org/rfcs/rfc3092.html>
 
 
 ## PREREQUISITES
 
-### Haskell
+### Glasgow Haskell Compiler
 
 You will need the Glorious Glasgow Haskell Compilation System.
-Visit http://haskell.org and get the Haskell platform installer
-for your platform.  Linux, OS X, and Windows are suppored.
+You can download an installer for it from http://haskell.org.
+I had good experiences downloading the Haskell platform installer
+for Mac OS which includes the Cabal package installer.
+Linux, OS X, and Windows are suppored.
+
 
 ## USAGE
 
