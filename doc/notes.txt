@@ -386,6 +386,1464 @@ Prelude> encode e 1
 Prelude> encode h 8
 64
 Prelude>
------------------------------------------
+
+
+---------------------------------------------------------------------
+                          December 16, 2017
+---------------------------------------------------------------------
+Go to macports.org and download package installer for MacOS High
+Sierra. Followed the instructions at the top of the page.
+
+Got the package and it seemd to install great.  Then rant.
+
+sudo port -v selfupdate
+
+Password:
+--->  Updating MacPorts base sources using rsync
+
+Willkommen auf dem RSYNC-server auf ftp.fau.de.
+Nicht all unsere Mirror sind per rsync verfuegbar.
+
+Welcome to the RSYNC daemon on ftp.fau.de.
+Not all of our mirrors are available through rsync.
+
+
+receiving file list ... done
+
+sent 16 bytes  received 55 bytes  47.33 bytes/sec
+total size is 85765120  speedup is 1207959.44
+
+Willkommen auf dem RSYNC-server auf ftp.fau.de.
+Nicht all unsere Mirror sind per rsync verfuegbar.
+
+Welcome to the RSYNC daemon on ftp.fau.de.
+Not all of our mirrors are available through rsync.
+
+
+receiving file list ... done
+
+sent 16 bytes  received 62 bytes  52.00 bytes/sec
+total size is 512  speedup is 6.56
+MacPorts base version 2.4.2 installed,
+MacPorts base version 2.4.2 downloaded.
+--->  Updating the ports tree
+Synchronizing local ports tree from rsync://rsync.macports.org/release/tarballs/ports.tar
+
+Willkommen auf dem RSYNC-server auf ftp.fau.de.
+Nicht all unsere Mirror sind per rsync verfuegbar.
+
+Welcome to the RSYNC daemon on ftp.fau.de.
+Not all of our mirrors are available through rsync.
+
+
+receiving file list ... done
+./
+
+sent 68 bytes  received 99 bytes  66.80 bytes/sec
+total size is 65069568  speedup is 389638.13
+Creating port index in /opt/local/var/macports/sources/rsync.macports.org/release/tarballs/ports
+
+Total number of ports parsed:	0 
+Ports successfully parsed:	0 
+Ports failed:			0 
+Up-to-date ports skipped:	20421
+
+--->  MacPorts base is already the latest version
+
+The ports tree has been updated. To upgrade your installed ports, you should run
+  port upgrade outdated
+epiphany:~ mark$ 
+
+-----------------------------------------------------------------------------
+
+
+Idea is to use this to install wxWidgets
+
+https://wiki.wxwidgets.org/Installing_On_Mac_OS_X_Using_MacPorts
+
+Installing On Mac OS X Using MacPorts
+Mac OS X (using MacPorts)
+The MacPorts project, http://www.macports.org/, provides an easy to
+use environment for compiling, installing, and maintaining Open Source
+packages in a custom tree on your Mac OS X system. It is somewhat
+similar to Perl's CPAN module. As of April 2004 a wxWidgets port is
+available and compiles cleanly without any intervention. Use the
+command "port search wxWidgets" to find the latest release available
+and then "port -v install <package-name>" to install. For example,
+"port -v install wxWidgets" works as of this writing.
+
+---------------------------------------------------------------------
+sudo port -v selfupdatesu
+port search wxWidgets
+sudo port upgrade outdated
+xcode-select --install
+sudo port -v install wxWidgets-3.0
+
+https://wiki.haskell.org/WxHaskell
+
+to support reactive-banana haskell library.
+
+Trying to avoid cabal at all costs.  It is horrible.
+
+Haskell has a binding for wxWidgets.  Looks something like
+
+module Main where
+import Graphics.UI.WX
+
+main :: IO ()
+main
+  = start hello
+
+hello :: IO ()
+hello
+  = do f    <- frame    [text := "Hello!"]
+       quit <- button f [text := "Quit", on command := close f]
+       set f [layout := widget quit]
+
+
+-----------------------
+
+epiphany:~ mark$ git clone https://github.com/wxHaskell/wxHaskell.git
+Cloning into 'wxHaskell'...
+remote: Counting objects: 8330, done.
+remote: Total 8330 (delta 0), reused 0 (delta 0), pack-reused 8330
+Receiving objects: 100% (8330/8330), 5.18 MiB | 3.81 MiB/s, done.
+Resolving deltas: 100% (4128/4128), done.
+epiphany:~ mark$
+
+-----------------
+epiphany:wxHaskell mark$ cat install.txt
+Building wxWidgets
+
+wxWidgets 2.9.3 for Debian 6 with GHC 6.12
+============================
+
+./configure --enable-unicode --disable-debug --prefix=/usr/local --enable-stc --enable-aui --enable-propgrid --enable-xrc --enable-ribbon --enable-richtext --with-opengl
+make && sudo make install
+
+You may need to fix LD_LIBRARY_PATH. I did.
+
+Quick workaround:
+export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
+
+Better workaround:
+Putting /usr/local/lib into the default library path for all users (if you have root privilege)
+
+su -
+echo /usr/local/lib > /etc/ld.so.conf.d/local.conf
+exit
+
+wxHaskell 0.90 with GHC 6.12
+===================
+
+cabal update
+cd wxdirect
+cabal install
+cd ../wxc
+cabal install
+cd ../wxcore
+PATH=$PATH:~/.cabal/bin
+cabal install
+cd ../wx
+cabal install
+
+The following shortcut should also work, as it is effectively the same thing:
+export PATH=${PATH}:~/.cabal/bin
+cabal install wx
+
+No go....
+
+-----------------
+Try this
+
+https://www.stackbuilders.com/tutorials/haskell/gui-application/
+
+sudo port install gobject-introspection webkit-gtk3 webkit2-gtk gtksourceview3 gtk-osx-application-gtk3 adwaita-icon-theme
+
+No go...
+
+------------------
+
+https://github.com/gtk2hs/gtk2hs
+
+Trying brew.  It looks much simpler than mac ports.
+
+https://brew.sh
+
+cabal update
+cabal install alex happy
+cabal install haskell-gi
+
+export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig
+
+cabal install haskell-gi
+
+--------------------
+
+https://github.com/haskell-gi/haskell-gi
+
+-----------------
+Removing macports.  Doing everything on homebrew.
+
+epiphany.home$ echo $PATH
+/Users/mark/.cabal/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+epiphany.home$ sudo rm -rf /opt/local
+epiphany.home$ sudo rm -rf /Applications/DarwinPorts
+epiphany.home$ sudo rm -rf /Applications/MacPorts
+epiphany.home$ sudo rm -rf /Library/LaunchDaemons/org.macports.*
+epiphany.home$ sudo rm -rf /Library/Receipts/DawinPorts*.pkg
+epiphany.home$ sudo rm -rf /Library/Receipts/MacPorts*.pkg
+epiphany.home$ sudo rm -rf /Library/StartupItems/DarwinPortsStartup
+epiphany.home$ sudo rm -rf /Library/Tcl/darwinports1.0
+epiphany.home$ sudo rm -rf /Library/Tcl/macports1.0 
+epiphany.home$ sudo rm -rf ~/.macports
+epiphany.home$ 
+epiphany.home$ echo $PATH
+/Users/mark/.cabal/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+epiphany.home$ brew install wget
+Warning: wget 1.19.2 is already installed
+
+
+https://bitboxer.de/2010/06/03/moving-from-macports-to-homebrew/
+
+
+epiphany.home$ cabal install haskell-gi
+Resolving dependencies...
+Notice: installing into a sandbox located at /Users/mark/.cabal-sandbox
+Configuring haskell-gi-0.20.3...
+Building haskell-gi-0.20.3...
+Installed haskell-gi-0.20.3
+epiphany.home$
+
+HOORAY!! uninstalling macports did the trick!!!!
+
+epiphany.home$ cd foochess/
+epiphany.home$ ghc -o hello hello.hs
+[1 of 1] Compiling Main             ( hello.hs, hello.o )
+
+hello.hs:3:1: error:
+    Could not find module ‘GI.Gtk’
+    Use -v to see a list of the files searched for.
+  |
+3 | import qualified GI.Gtk as Gtk
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+hello.hs:4:1: error:
+    Could not find module ‘Data.GI.Base’
+    Use -v to see a list of the files searched for.
+  |
+4 | import Data.GI.Base
+  | ^^^^^^^^^^^^^^^^^^^
+epiphany.home$ 
+
+
+CRAP!!!!  Still can't find the module.
+
+
+https://wiki.haskell.org/Gtk2Hs/Mac
+
+cabal install alex happy
+cabal install gtk2hs-buildtools
+cabal install glib
+cabal install gtk -f have-quartz-gtk
+
+
+
+
+
+epiphany.home$ cabal install gtk -f have-quartz-gtk
+Resolving dependencies...
+In order, the following will be installed:
+cairo-0.13.4.2 (via: gtk-0.14.7 pango-0.13.4.0) (new package)
+process-1.4.3.0 (latest: 1.6.2.0) (via: gtk2hs-buildtools-0.13.3.1
+Cabal-1.24.2.0) (new version)
+pango-0.13.4.0 (via: gtk-0.14.7) (new package)
+Cabal-1.24.2.0 (latest: 2.0.1.1) (via: gio-0.13.4.0
+gtk2hs-buildtools-0.13.3.1) (new version)
+gtk2hs-buildtools-0.13.3.1 (via: gtk-0.14.7 gio-0.13.4.0 pango-0.13.4.0
+cairo-0.13.4.2) (reinstall) (changes: Cabal-2.0.1.1 removed, process-1.6.1.0
+removed)
+gio-0.13.4.0 (via: gtk-0.14.7) (new package)
+gtk-0.14.7 +have-quartz-gtk (new package)
+Warning: Note that reinstalls are always dangerous. Continuing anyway...
+Notice: installing into a sandbox located at /Users/mark/.cabal-sandbox
+Downloading cairo-0.13.4.2...
+Downloading process-1.4.3.0...
+Configuring process-1.4.3.0...
+Configuring cairo-0.13.4.2...
+Building cairo-0.13.4.2...
+Building process-1.4.3.0...
+Installed process-1.4.3.0
+Downloading Cabal-1.24.2.0...
+Configuring Cabal-1.24.2.0...
+Building Cabal-1.24.2.0...
+Installed cairo-0.13.4.2
+Downloading pango-0.13.4.0...
+Configuring pango-0.13.4.0...
+Building pango-0.13.4.0...
+Installed pango-0.13.4.0
+Installed Cabal-1.24.2.0
+Configuring gtk2hs-buildtools-0.13.3.1...
+Building gtk2hs-buildtools-0.13.3.1...
+Installed gtk2hs-buildtools-0.13.3.1
+Downloading gio-0.13.4.0...
+Configuring gio-0.13.4.0...
+Building gio-0.13.4.0...
+Installed gio-0.13.4.0
+Downloading gtk-0.14.7...
+Configuring gtk-0.14.7...
+Failed to install gtk-0.14.7
+Build log ( /Users/mark/.cabal-sandbox/logs/ghc-8.2.1/gtk-0.14.7-AS7zh8PW0zr7nW93gNq88v.log ):
+cabal: Entering directory '/var/folders/81/005df0sd2271jxcdsk39kbbw0000gn/T/cabal-tmp-74654/gtk-0.14.7'
+cabal: Leaving directory '/var/folders/81/005df0sd2271jxcdsk39kbbw0000gn/T/cabal-tmp-74654/gtk-0.14.7'
+cabal: Error: some packages failed to install:
+gtk-0.14.7-AS7zh8PW0zr7nW93gNq88v failed during the configure step. The
+exception was:
+dieVerbatim: user error (cabal: '/usr/local/bin/ghc' exited with an error:
+<command line>: cannot satisfy -package-id
+gtk2hs-buildtools-0.13.3.1-GY3ChZZp5dFAuE9vqLR3ts
+(use -v for more information)
+)
+
+
+cabal install yesod-test
+
+epiphany.home$ cabal install yesod-test
+Resolving dependencies...
+In order, the following will be installed:
+appar-0.1.4 (via: iproute-1.7.1) (new package)
+auto-update-0.1.4 (via: yesod-core-1.4.37.2 fast-logger-2.4.10 warp-3.2.13)
+(new package)
+base-compat-0.9.3 (via: aeson-1.2.3.0 attoparsec-iso8601-1.0.0.0) (new
+package)
+base64-bytestring-1.0.0.1 (via: persistent-2.7.1 clientsession-0.9.1.2
+wai-extra-3.0.20.2) (new package)
+basement-0.0.4 (via: memory-0.14.10 foundation-0.0.17) (new package)
+blaze-builder-0.4.0.2 (via: yesod-test-1.5.8 yesod-core-1.4.37.2
+tagstream-conduit-0.5.5.3 monad-logger-0.3.26 xml-conduit-1.4.0.4
+conduit-extra-1.2.2 wai-extra-3.0.20.2 wai-logger-2.3.0 warp-3.2.13
+uri-bytestring-0.3.0.1 blaze-html-0.9.0.1 wai-3.2.1.1 cookie-0.4.3
+blaze-markup-0.8.0.0 streaming-commons-0.1.18) (new package)
+byteable-0.1.1 (via: yesod-core-1.4.37.2 cprng-aes-0.6.1 cipher-aes-0.2.11
+crypto-cipher-types-0.0.9 securemem-0.1.9) (new package)
+byteorder-1.0.4 (via: wai-logger-2.3.0 iproute-1.7.1) (new package)
+bytestring-builder-0.10.8.1.0 (via: warp-3.2.13 wai-3.2.1.1 http2-1.6.3) (new
+package)
+cabal-doctest-1.0.4 (via: http-api-data-0.3.7.1) (new package)
+cereal-0.5.4.0 (via: yesod-core-1.4.37.2 clientsession-0.9.1.2 skein-1.0.9.4
+crypto-api-0.13.2) (new package)
+colour-2.3.4 (via: ansi-terminal-0.7.1.1) (new package)
+data-default-class-0.1.2.0 (via: wai-extra-3.0.20.2 data-default-0.7.1.1
+cookie-0.4.3 data-default-instances-old-locale-0.0.1
+data-default-instances-dlist-0.0.1 data-default-instances-containers-0.0.1)
+(new package)
+deepseq-generics-0.2.0.0 (via: yesod-core-1.4.37.2) (new package)
+dlist-0.8.0.3 (via: aeson-1.2.3.0 data-default-instances-dlist-0.0.1) (new
+package)
+easy-file-0.2.1 (via: fast-logger-2.4.10) (new package)
+entropy-0.3.8 (via: clientsession-0.9.1.2 crypto-api-0.13.2) (new package)
+fail-4.9.0.0 (via: uri-bytestring-0.3.0.1) (new package)
+gtk2hs-buildtools-0.13.3.1 (reinstall) (changes: Cabal-1.24.2.0 -> 2.0.0.2,
+process-1.4.3.0 -> 1.6.1.0)
+haskell-lexer-1.0.1 (via: pretty-show-1.6.15) (new package)
+hspec-expectations-0.8.2 (via: hspec-core-2.4.4) (new package)
+http-date-0.0.6.1 (via: warp-3.2.13) (new package)
+http-types-0.11 (via: yesod-test-1.5.8 yesod-core-1.4.37.2 wai-extra-3.0.20.2
+wai-logger-2.3.0 http-api-data-0.3.7.1 warp-3.2.13 wai-3.2.1.1) (new package)
+monad-loops-0.4.3 (via: monad-logger-0.3.26) (new package)
+old-locale-1.0.0.7 (via: persistent-2.7.1 yesod-core-1.4.37.2
+wai-extra-3.0.20.2 cookie-0.4.3 data-default-instances-old-locale-0.0.1
+old-time-1.1.0.3) (new package)
+path-pieces-0.2.1 (via: persistent-2.7.1 yesod-core-1.4.37.2) (new package)
+psqueues-0.2.4.0 (via: http2-1.6.3) (new package)
+quickcheck-io-0.2.0 (via: hspec-core-2.4.4) (new package)
+safe-0.3.15 (via: yesod-core-1.4.37.2) (new package)
+semigroups-0.18.3 (via: yesod-core-1.4.37.2) (new package)
+setenv-0.1.1.3 (via: clientsession-0.9.1.2 hspec-core-2.4.4) (new package)
+silently-1.2.5 (via: persistent-2.7.1) (new package)
+simple-sendfile-0.2.26 (via: warp-3.2.13) (new package)
+stm-chans-3.0.0.4 (via: monad-logger-0.3.26) (new package)
+stringsearch-0.3.6.6 (via: wai-extra-3.0.20.2) (new package)
+th-abstraction-0.2.6.0 (via: aeson-1.2.3.0) (new package)
+th-lift-0.7.7 (via: th-lift-instances-0.1.11) (new package)
+time-locale-compat-0.1.1.3 -old-locale (via: http-api-data-0.3.7.1
+aeson-1.2.3.0) (new package)
+transformers-compat-0.5.1.4 (via: monad-logger-0.3.26 conduit-1.2.12.1
+resourcet-1.1.10 monad-control-1.0.2.2 exceptions-0.8.3 mmorph-1.1.0
+tagged-0.8.5 transformers-base-0.4.4) (new package)
+typed-process-0.2.0.0 (via: conduit-extra-1.2.2) (new package)
+unix-compat-0.5.0.1 (via: yesod-core-1.4.37.2 wai-extra-3.0.20.2 warp-3.2.13)
+(new package)
+unliftio-core-0.1.0.0 (via: monad-logger-0.3.26 conduit-extra-1.2.2
+resourcet-1.1.10) (new package)
+uuid-types-1.0.3 (via: http-api-data-0.3.7.1 aeson-1.2.3.0) (new package)
+vault-0.3.0.7 (via: wai-extra-3.0.20.2 warp-3.2.13 wai-3.2.1.1) (new package)
+vector-th-unbox-0.2.1.6 (via: math-functions-0.2.1.0) (new package)
+void-0.7.2 (via: wai-extra-3.0.20.2) (new package)
+word8-0.1.3 (via: yesod-core-1.4.37.2 wai-extra-3.0.20.2 warp-3.2.13) (new
+package)
+xml-types-0.3.6 (via: yesod-test-1.5.8 html-conduit-1.2.1.2
+xml-conduit-1.4.0.4) (new package)
+attoparsec-iso8601-1.0.0.0 (via: http-api-data-0.3.7.1) (new package)
+foundation-0.0.17 (via: memory-0.14.10) (new package)
+streaming-commons-0.1.18 (via: conduit-extra-1.2.2 wai-extra-3.0.20.2
+warp-3.2.13) (new package)
+blaze-markup-0.8.0.0 (via: yesod-test-1.5.8 persistent-2.7.1
+yesod-core-1.4.37.2 xml-conduit-1.4.0.4 shakespeare-2.0.14.1
+blaze-html-0.9.0.1) (new package)
+iproute-1.7.1 (via: wai-extra-3.0.20.2 warp-3.2.13) (new package)
+ansi-terminal-0.7.1.1 (via: wai-extra-3.0.20.2 hspec-core-2.4.4) (new package)
+data-default-instances-containers-0.0.1 (via: data-default-0.7.1.1) (new
+package)
+data-default-instances-dlist-0.0.1 (via: data-default-0.7.1.1) (new package)
+pretty-show-1.6.15 (via: yesod-test-1.5.8) (new package)
+old-time-1.1.0.3 (via: unix-time-0.3.7) (new package)
+data-default-instances-old-locale-0.0.1 (via: data-default-0.7.1.1) (new
+package)
+cookie-0.4.3 (via: yesod-test-1.5.8 yesod-core-1.4.37.2 wai-extra-3.0.20.2)
+(new package)
+http2-1.6.3 (via: warp-3.2.13) (new package)
+th-lift-instances-0.1.11 (via: uri-bytestring-0.3.0.1) (new package)
+transformers-base-0.4.4 (via: persistent-2.7.1 yesod-core-1.4.37.2
+monad-logger-0.3.26 conduit-extra-1.2.2 conduit-1.2.12.1 resourcet-1.1.10
+lifted-base-0.2.3.11 resource-pool-0.2.3.2 monad-control-1.0.2.2) (new
+package)
+tagged-0.8.5 (via: persistent-2.7.1 clientsession-0.9.1.2 skein-1.0.9.4
+aeson-1.2.3.0 crypto-api-0.13.2) (new package)
+mmorph-1.1.0 (via: conduit-1.2.12.1 resourcet-1.1.10) (new package)
+exceptions-0.8.3 (via: persistent-2.7.1 yesod-core-1.4.37.2
+monad-logger-0.3.26 conduit-extra-1.2.2 conduit-1.2.12.1 resourcet-1.1.10
+shakespeare-2.0.14.1) (new package)
+wai-3.2.1.1 (via: yesod-test-1.5.8 yesod-core-1.4.37.2 wai-extra-3.0.20.2
+wai-logger-2.3.0 warp-3.2.13) (new package)
+math-functions-0.2.1.0 (via: mwc-random-0.13.6.0) (new package)
+memory-0.14.10 (via: securemem-0.1.9) (new package)
+blaze-html-0.9.0.1 (via: yesod-test-1.5.8 persistent-2.7.1 yesod-core-1.4.37.2
+xml-conduit-1.4.0.4 shakespeare-2.0.14.1) (new package)
+hspec-core-2.4.4 (via: yesod-test-1.5.8) (new package)
+unix-time-0.3.7 (via: wai-logger-2.3.0 fast-logger-2.4.10) (new package)
+data-default-0.7.1.1 (via: yesod-core-1.4.37.2 tagstream-conduit-0.5.5.3
+xml-conduit-1.4.0.4) (new package)
+uri-bytestring-0.3.0.1 (via: http-api-data-0.3.7.1) (new package)
+monad-control-1.0.2.2 (via: yesod-test-1.5.8 persistent-2.7.1
+yesod-core-1.4.37.2 monad-logger-0.3.26 xml-conduit-1.4.0.4
+conduit-extra-1.2.2 conduit-1.2.12.1 resourcet-1.1.10 lifted-base-0.2.3.11
+resource-pool-0.2.3.2) (new package)
+crypto-api-0.13.2 (via: clientsession-0.9.1.2 skein-1.0.9.4) (new package)
+aeson-1.2.3.0 (via: persistent-2.7.1 yesod-core-1.4.37.2 wai-extra-3.0.20.2
+shakespeare-2.0.14.1) (new package)
+warp-3.2.13 (via: yesod-core-1.4.37.2) (new package)
+mwc-random-0.13.6.0 (via: yesod-core-1.4.37.2) (new package)
+securemem-0.1.9 (via: cipher-aes-0.2.11 crypto-cipher-types-0.0.9
+crypto-random-0.0.9) (new package)
+fast-logger-2.4.10 (via: persistent-2.7.1 yesod-core-1.4.37.2
+monad-logger-0.3.26 wai-extra-3.0.20.2 wai-logger-2.3.0) (new package)
+http-api-data-0.3.7.1 (via: persistent-2.7.1) (new package)
+resource-pool-0.2.3.2 (via: persistent-2.7.1) (new package)
+lifted-base-0.2.3.11 (via: persistent-2.7.1 yesod-core-1.4.37.2
+monad-logger-0.3.26 conduit-1.2.12.1 wai-extra-3.0.20.2 resourcet-1.1.10) (new
+package)
+skein-1.0.9.4 (via: clientsession-0.9.1.2) (new package)
+shakespeare-2.0.14.1 (via: yesod-core-1.4.37.2) (new package)
+crypto-random-0.0.9 (via: clientsession-0.9.1.2 cprng-aes-0.6.1) (new package)
+crypto-cipher-types-0.0.9 (via: cipher-aes-0.2.11) (new package)
+wai-logger-2.3.0 (via: yesod-core-1.4.37.2 wai-extra-3.0.20.2) (new package)
+resourcet-1.1.10 (via: html-conduit-1.2.1.2 persistent-2.7.1
+yesod-core-1.4.37.2 tagstream-conduit-0.5.5.3 monad-logger-0.3.26
+xml-conduit-1.4.0.4 conduit-extra-1.2.2 conduit-1.2.12.1 wai-extra-3.0.20.2)
+(new package)
+cipher-aes-0.2.11 (via: clientsession-0.9.1.2 cprng-aes-0.6.1) (new package)
+wai-extra-3.0.20.2 (via: yesod-test-1.5.8 yesod-core-1.4.37.2) (new package)
+conduit-1.2.12.1 (via: html-conduit-1.2.1.2 persistent-2.7.1
+yesod-core-1.4.37.2 tagstream-conduit-0.5.5.3 monad-logger-0.3.26
+xml-conduit-1.4.0.4 conduit-extra-1.2.2) (new package)
+cprng-aes-0.6.1 (via: clientsession-0.9.1.2) (new package)
+conduit-extra-1.2.2 (via: html-conduit-1.2.1.2 yesod-core-1.4.37.2
+tagstream-conduit-0.5.5.3 monad-logger-0.3.26 xml-conduit-1.4.0.4) (new
+package)
+clientsession-0.9.1.2 (via: yesod-core-1.4.37.2) (new package)
+xml-conduit-1.4.0.4 (latest: 1.7.0) (via: yesod-test-1.5.8
+html-conduit-1.2.1.2 tagstream-conduit-0.5.5.3) (new package)
+monad-logger-0.3.26 (via: persistent-2.7.1 yesod-core-1.4.37.2) (new package)
+tagstream-conduit-0.5.5.3 (via: html-conduit-1.2.1.2) (new package)
+yesod-core-1.4.37.2 (via: yesod-test-1.5.8) (new package)
+persistent-2.7.1 (latest: 2.7.2) (via: yesod-test-1.5.8) (new package)
+html-conduit-1.2.1.2 (via: yesod-test-1.5.8) (new package)
+yesod-test-1.5.8 (new package)
+Warning: Note that reinstalls are always dangerous. Continuing anyway...
+Notice: installing into a sandbox located at /Users/mark/.cabal-sandbox
+Downloading appar-0.1.4...
+Downloading auto-update-0.1.4...
+Configuring base64-bytestring-1.0.0.1...
+Configuring appar-0.1.4...
+Downloading base-compat-0.9.3...
+Configuring auto-update-0.1.4...
+Configuring base-compat-0.9.3...
+Building base64-bytestring-1.0.0.1...
+Building appar-0.1.4...
+Building auto-update-0.1.4...
+Building base-compat-0.9.3...
+Installed appar-0.1.4
+Downloading basement-0.0.4...
+Installed auto-update-0.1.4
+Configuring blaze-builder-0.4.0.2...
+Configuring basement-0.0.4...
+Installed base64-bytestring-1.0.0.1
+Downloading byteable-0.1.1...
+Configuring byteable-0.1.1...
+Building blaze-builder-0.4.0.2...
+Building basement-0.0.4...
+Building byteable-0.1.1...
+Installed base-compat-0.9.3
+Downloading byteorder-1.0.4...
+Installed byteable-0.1.1
+Downloading bytestring-builder-0.10.8.1.0...
+Configuring byteorder-1.0.4...
+Configuring bytestring-builder-0.10.8.1.0...
+Building byteorder-1.0.4...
+Building bytestring-builder-0.10.8.1.0...
+Installed bytestring-builder-0.10.8.1.0
+Downloading cabal-doctest-1.0.4...
+Configuring cabal-doctest-1.0.4...
+Installed byteorder-1.0.4
+Downloading cereal-0.5.4.0...
+Configuring cereal-0.5.4.0...
+Building cabal-doctest-1.0.4...
+Installed blaze-builder-0.4.0.2
+Downloading colour-2.3.4...
+Configuring colour-2.3.4...
+Building cereal-0.5.4.0...
+Building colour-2.3.4...
+Installed cabal-doctest-1.0.4
+Configuring data-default-class-0.1.2.0...
+Building data-default-class-0.1.2.0...
+Installed data-default-class-0.1.2.0
+Downloading deepseq-generics-0.2.0.0...
+Configuring deepseq-generics-0.2.0.0...
+Building deepseq-generics-0.2.0.0...
+Installed deepseq-generics-0.2.0.0
+Configuring dlist-0.8.0.3...
+Installed colour-2.3.4
+Downloading easy-file-0.2.1...
+Configuring easy-file-0.2.1...
+Building dlist-0.8.0.3...
+Building easy-file-0.2.1...
+Installed dlist-0.8.0.3
+Downloading entropy-0.3.8...
+Configuring entropy-0.3.8...
+Installed easy-file-0.2.1
+Downloading fail-4.9.0.0...
+Configuring fail-4.9.0.0...
+Building fail-4.9.0.0...
+Installed fail-4.9.0.0
+Configuring gtk2hs-buildtools-0.13.3.1...
+Installed cereal-0.5.4.0
+Configuring haskell-lexer-1.0.1...
+Building gtk2hs-buildtools-0.13.3.1...
+Building haskell-lexer-1.0.1...
+Building entropy-0.3.8...
+Installed entropy-0.3.8
+Downloading hspec-expectations-0.8.2...
+Configuring hspec-expectations-0.8.2...
+Building hspec-expectations-0.8.2...
+Installed hspec-expectations-0.8.2
+Downloading http-date-0.0.6.1...
+Configuring http-date-0.0.6.1...
+Building http-date-0.0.6.1...
+Installed http-date-0.0.6.1
+Downloading http-types-0.11...
+Configuring http-types-0.11...
+Building http-types-0.11...
+Installed http-types-0.11
+Downloading monad-loops-0.4.3...
+Configuring monad-loops-0.4.3...
+Building monad-loops-0.4.3...
+Installed basement-0.0.4
+Configuring old-locale-1.0.0.7...
+Building old-locale-1.0.0.7...
+Installed monad-loops-0.4.3
+Downloading path-pieces-0.2.1...
+Configuring path-pieces-0.2.1...
+Installed old-locale-1.0.0.7
+Downloading psqueues-0.2.4.0...
+Configuring psqueues-0.2.4.0...
+Building path-pieces-0.2.1...
+Building psqueues-0.2.4.0...
+Installed path-pieces-0.2.1
+Downloading quickcheck-io-0.2.0...
+Configuring quickcheck-io-0.2.0...
+Building quickcheck-io-0.2.0...
+Installed quickcheck-io-0.2.0
+Configuring safe-0.3.15...
+Building safe-0.3.15...
+Installed safe-0.3.15
+Downloading semigroups-0.18.3...
+Configuring semigroups-0.18.3...
+Installed psqueues-0.2.4.0
+Downloading setenv-0.1.1.3...
+Configuring setenv-0.1.1.3...
+Building semigroups-0.18.3...
+Building setenv-0.1.1.3...
+Installed setenv-0.1.1.3
+Downloading silently-1.2.5...
+Configuring silently-1.2.5...
+Installed semigroups-0.18.3
+Downloading simple-sendfile-0.2.26...
+Configuring simple-sendfile-0.2.26...
+Building silently-1.2.5...
+Building simple-sendfile-0.2.26...
+Installed silently-1.2.5
+Downloading stm-chans-3.0.0.4...
+Configuring stm-chans-3.0.0.4...
+Installed simple-sendfile-0.2.26
+Downloading stringsearch-0.3.6.6...
+Configuring stringsearch-0.3.6.6...
+Building stringsearch-0.3.6.6...
+Building stm-chans-3.0.0.4...
+Installed stm-chans-3.0.0.4
+Downloading th-abstraction-0.2.6.0...
+Configuring th-abstraction-0.2.6.0...
+Building th-abstraction-0.2.6.0...
+Installed stringsearch-0.3.6.6
+Downloading th-lift-0.7.7...
+Configuring th-lift-0.7.7...
+Building th-lift-0.7.7...
+Installed gtk2hs-buildtools-0.13.3.1
+Downloading time-locale-compat-0.1.1.3...
+Configuring time-locale-compat-0.1.1.3...
+Building time-locale-compat-0.1.1.3...
+Installed th-lift-0.7.7
+Configuring transformers-compat-0.5.1.4...
+Installed time-locale-compat-0.1.1.3
+Configuring typed-process-0.2.0.0...
+Installed th-abstraction-0.2.6.0
+Downloading unix-compat-0.5.0.1...
+Configuring unix-compat-0.5.0.1...
+Building transformers-compat-0.5.1.4...
+Building typed-process-0.2.0.0...
+Building unix-compat-0.5.0.1...
+Installed transformers-compat-0.5.1.4
+Configuring unliftio-core-0.1.0.0...
+Building unliftio-core-0.1.0.0...
+Installed unix-compat-0.5.0.1
+Downloading uuid-types-1.0.3...
+Configuring uuid-types-1.0.3...
+Installed typed-process-0.2.0.0
+Downloading vault-0.3.0.7...
+Configuring vault-0.3.0.7...
+Installed unliftio-core-0.1.0.0
+Downloading vector-th-unbox-0.2.1.6...
+Configuring vector-th-unbox-0.2.1.6...
+Building uuid-types-1.0.3...
+Building vault-0.3.0.7...
+Building vector-th-unbox-0.2.1.6...
+Installed vector-th-unbox-0.2.1.6
+Downloading void-0.7.2...
+Configuring void-0.7.2...
+Installed uuid-types-1.0.3
+Downloading word8-0.1.3...
+Building void-0.7.2...
+Installed vault-0.3.0.7
+Configuring xml-types-0.3.6...
+Configuring word8-0.1.3...
+Installed void-0.7.2
+Downloading attoparsec-iso8601-1.0.0.0...
+Configuring attoparsec-iso8601-1.0.0.0...
+Building word8-0.1.3...
+Building xml-types-0.3.6...
+Building attoparsec-iso8601-1.0.0.0...
+Installed haskell-lexer-1.0.1
+Downloading iproute-1.7.1...
+Configuring iproute-1.7.1...
+Installed word8-0.1.3
+Configuring streaming-commons-0.1.18...
+Building iproute-1.7.1...
+Building streaming-commons-0.1.18...
+Installed attoparsec-iso8601-1.0.0.0
+Configuring blaze-markup-0.8.0.0...
+Building blaze-markup-0.8.0.0...
+Installed xml-types-0.3.6
+Configuring data-default-instances-containers-0.0.1...
+Building data-default-instances-containers-0.0.1...
+Installed iproute-1.7.1
+Downloading ansi-terminal-0.7.1.1...
+Installed data-default-instances-containers-0.0.1
+Configuring data-default-instances-dlist-0.0.1...
+Configuring ansi-terminal-0.7.1.1...
+Building ansi-terminal-0.7.1.1...
+Building data-default-instances-dlist-0.0.1...
+Installed data-default-instances-dlist-0.0.1
+Downloading foundation-0.0.17...
+Configuring foundation-0.0.17...
+Installed streaming-commons-0.1.18
+Downloading old-time-1.1.0.3...
+Configuring old-time-1.1.0.3...
+Installed blaze-markup-0.8.0.0
+Configuring data-default-instances-old-locale-0.0.1...
+Building foundation-0.0.17...
+Building data-default-instances-old-locale-0.0.1...
+Installed data-default-instances-old-locale-0.0.1
+Downloading cookie-0.4.3...
+Configuring cookie-0.4.3...
+Building cookie-0.4.3...
+Installed ansi-terminal-0.7.1.1
+Downloading http2-1.6.3...
+Building old-time-1.1.0.3...
+Configuring http2-1.6.3...
+Installed cookie-0.4.3
+Downloading th-lift-instances-0.1.11...
+Configuring th-lift-instances-0.1.11...
+Building http2-1.6.3...
+Building th-lift-instances-0.1.11...
+Installed th-lift-instances-0.1.11
+Configuring transformers-base-0.4.4...
+Installed old-time-1.1.0.3
+Downloading tagged-0.8.5...
+Configuring tagged-0.8.5...
+Building transformers-base-0.4.4...
+Building tagged-0.8.5...
+Installed transformers-base-0.4.4
+Configuring mmorph-1.1.0...
+Building mmorph-1.1.0...
+Installed tagged-0.8.5
+Configuring exceptions-0.8.3...
+Installed mmorph-1.1.0
+Downloading math-functions-0.2.1.0...
+Configuring math-functions-0.2.1.0...
+Building exceptions-0.8.3...
+Building math-functions-0.2.1.0...
+Installed exceptions-0.8.3
+Downloading wai-3.2.1.1...
+Configuring wai-3.2.1.1...
+Building wai-3.2.1.1...
+Installed wai-3.2.1.1
+Configuring pretty-show-1.6.15...
+Building pretty-show-1.6.15...
+Installed http2-1.6.3
+Configuring blaze-html-0.9.0.1...
+Building blaze-html-0.9.0.1...
+Installed pretty-show-1.6.15
+Configuring data-default-0.7.1.1...
+Installed math-functions-0.2.1.0
+Downloading hspec-core-2.4.4...
+Configuring hspec-core-2.4.4...
+Building data-default-0.7.1.1...
+Building hspec-core-2.4.4...
+Installed data-default-0.7.1.1
+Downloading uri-bytestring-0.3.0.1...
+Configuring uri-bytestring-0.3.0.1...
+Building uri-bytestring-0.3.0.1...
+Installed hspec-core-2.4.4
+Downloading unix-time-0.3.7...
+Installed uri-bytestring-0.3.0.1
+Configuring monad-control-1.0.2.2...
+Configuring unix-time-0.3.7...
+Building monad-control-1.0.2.2...
+Installed foundation-0.0.17
+Downloading crypto-api-0.13.2...
+Configuring crypto-api-0.13.2...
+Installed blaze-html-0.9.0.1
+Downloading aeson-1.2.3.0...
+Installed monad-control-1.0.2.2
+Downloading warp-3.2.13...
+Building crypto-api-0.13.2...
+Configuring aeson-1.2.3.0...
+Configuring warp-3.2.13...
+Building unix-time-0.3.7...
+Building aeson-1.2.3.0...
+Building warp-3.2.13...
+Installed unix-time-0.3.7
+Downloading mwc-random-0.13.6.0...
+Configuring mwc-random-0.13.6.0...
+Building mwc-random-0.13.6.0...
+Installed crypto-api-0.13.2
+Downloading http-api-data-0.3.7.1...
+Configuring http-api-data-0.3.7.1...
+Building http-api-data-0.3.7.1...
+Installed warp-3.2.13
+Downloading memory-0.14.10...
+Configuring memory-0.14.10...
+Building memory-0.14.10...
+Installed memory-0.14.10
+Downloading resource-pool-0.2.3.2...
+Configuring resource-pool-0.2.3.2...
+Building resource-pool-0.2.3.2...
+Installed http-api-data-0.3.7.1
+Configuring lifted-base-0.2.3.11...
+Installed resource-pool-0.2.3.2
+Downloading fast-logger-2.4.10...
+Configuring fast-logger-2.4.10...
+Building lifted-base-0.2.3.11...
+Building fast-logger-2.4.10...
+Installed mwc-random-0.13.6.0
+Downloading skein-1.0.9.4...
+Configuring skein-1.0.9.4...
+Building skein-1.0.9.4...
+Installed lifted-base-0.2.3.11
+Downloading securemem-0.1.9...
+Configuring securemem-0.1.9...
+Installed fast-logger-2.4.10
+Configuring resourcet-1.1.10...
+Building securemem-0.1.9...
+Building resourcet-1.1.10...
+Installed securemem-0.1.9
+Downloading wai-logger-2.3.0...
+Configuring wai-logger-2.3.0...
+Building wai-logger-2.3.0...
+Installed resourcet-1.1.10
+Downloading crypto-random-0.0.9...
+Configuring crypto-random-0.0.9...
+Installed wai-logger-2.3.0
+Downloading crypto-cipher-types-0.0.9...
+Configuring crypto-cipher-types-0.0.9...
+Building crypto-random-0.0.9...
+Building crypto-cipher-types-0.0.9...
+Installed crypto-random-0.0.9
+Configuring conduit-1.2.12.1...
+Installed crypto-cipher-types-0.0.9
+Downloading cipher-aes-0.2.11...
+Configuring cipher-aes-0.2.11...
+Building conduit-1.2.12.1...
+Building cipher-aes-0.2.11...
+Installed skein-1.0.9.4
+Installed cipher-aes-0.2.11
+Downloading cprng-aes-0.6.1...
+Configuring cprng-aes-0.6.1...
+Building cprng-aes-0.6.1...
+Installed cprng-aes-0.6.1
+Downloading clientsession-0.9.1.2...
+Configuring clientsession-0.9.1.2...
+Installed conduit-1.2.12.1
+Configuring conduit-extra-1.2.2...
+Building clientsession-0.9.1.2...
+Building conduit-extra-1.2.2...
+Installed clientsession-0.9.1.2
+Installed conduit-extra-1.2.2
+Downloading monad-logger-0.3.26...
+Configuring xml-conduit-1.4.0.4...
+Configuring monad-logger-0.3.26...
+Building xml-conduit-1.4.0.4...
+Building monad-logger-0.3.26...
+Installed monad-logger-0.3.26
+Installed xml-conduit-1.4.0.4
+Downloading tagstream-conduit-0.5.5.3...
+Configuring tagstream-conduit-0.5.5.3...
+Building tagstream-conduit-0.5.5.3...
+Installed aeson-1.2.3.0
+Downloading wai-extra-3.0.20.2...
+Downloading shakespeare-2.0.14.1...
+Installed tagstream-conduit-0.5.5.3
+Downloading persistent-2.7.1...
+Configuring wai-extra-3.0.20.2...
+Downloading html-conduit-1.2.1.2...
+Configuring shakespeare-2.0.14.1...
+Building wai-extra-3.0.20.2...
+Building shakespeare-2.0.14.1...
+Configuring persistent-2.7.1...
+Configuring html-conduit-1.2.1.2...
+Building persistent-2.7.1...
+Building html-conduit-1.2.1.2...
+Installed html-conduit-1.2.1.2
+Installed wai-extra-3.0.20.2
+Installed shakespeare-2.0.14.1
+Downloading yesod-core-1.4.37.2...
+Configuring yesod-core-1.4.37.2...
+Building yesod-core-1.4.37.2...
+Installed persistent-2.7.1
+Installed yesod-core-1.4.37.2
+Downloading yesod-test-1.5.8...
+Configuring yesod-test-1.5.8...
+Building yesod-test-1.5.8...
+Installed yesod-test-1.5.8
+epiphany.home$ cabal install gtk2hs-buildtools
+Resolving dependencies...
+All the requested packages are already installed:
+gtk2hs-buildtools-0.13.3.1
+Use --reinstall if you want to reinstall anyway.
+epiphany.home$ cabal install gtk -f have-quartz-gtk
+Resolving dependencies...
+Notice: installing into a sandbox located at /Users/mark/.cabal-sandbox
+Configuring gtk-0.14.7...
+Building gtk-0.14.7...
+Installed gtk-0.14.7
+epiphany.home$ ls
+
+
+Got it working finally.
+
+Look at this tommorrow...
+https://www.stackbuilders.com/tutorials/haskell/gui-application/
+
+----------------------------------
+December 17, 2017
+----------------------------------
+
+So how did we get it to work?  A few thoughts.
+
+False starts included mac ports, vxWidgets, cabal hell, Qt, wxHaskell
+Wasted most of the night on wxHaskell.  It is old an not well
+supported.  I couldn't get it installed after many hours.
+
+Getting rid of mac ports was a breakthrough
+
+https://www.stackbuilders.com/tutorials/haskell/gui-application/
+
+Homebrew, a lifesaver
+
+https://brew.sh
+
+Haskell-gi was helpful
+
+https://brew.sh
+
+Closest to being right was
+
+https://wiki.haskell.org/Gtk2Hs/Mac
+
+Latest procedure was entitled
+"2 HomeBrew OS X El Capitan (64 bit, last checked 2016-08)"
+
+just a bit over a year old.
+
+I had to augment that with two tweaks.  Installing a package
+yesod-test which may or may not be necessary.  See
+
+https://github.com/DanielG/ghc-mod/issues/170
+
+I also used the following link to update caball-install
+
+https://github.com/haskell-gi/haskell-gi
+
+Again sure if it is necessary, but comforting to do.
+
+Also, found that when your cabal sandbox breaks, the thing
+to do is blow it away and re-create it.
+
+Final magic was using sudo to my final cabal install.
+Someone mentioned that on a webpost reply in stackspace
+or some such place.
+
+
+For the record, here is my history from last night
+
+epiphany.home$ history
+  511  python
+  512  ls
+  513  port search wxWidgets
+  514  port -v install wxWidgets
+  515* 
+  516  port -v install wxWidgets-3.0
+  517  sudo port -v install wxWidgets-3.0
+  518  sudo port -f activate jpeg
+  519  sudo port -v install wxWidgets-3.0
+  520  ls
+  521  cd quick
+  522  ls
+  523  ghc main.hs 
+  524  brew --help
+  525  sudo port install wxWidgets-devel +universal
+  526  cd wx
+  527  ls
+  528  cd ..
+  529  cd wx
+  530  ls
+  531  cd wxhaskell-0.11.1.2/
+  532  ls
+  533  make -n
+  534  more Readme.txt 
+  535  gcc --version
+  536  ls
+  537  mkdir mybuild
+  538  cd mybuild
+  539  ../configure --enable-unicode
+  540  ../configure --help
+  541  cd ..
+  542  ls
+  543  ./configure
+  544  make -n install
+  545  make -n configure
+  546  ls
+  547  cd mybuild/
+  548  ls
+  549  configure
+  550  ../configure
+  551  pwd
+  552  ls
+  553  which wxwidgets
+  554  sudo port -v install wxWidgets-3.0
+  555  ls
+  556  pwd
+  557  ls
+  558  wxWidgets
+  559  ls /
+  560  ls /lib
+  561  ls /usr
+  562  ls /local
+  563  ls /sbin
+  564  ls
+  565  port search wxWidgets
+  566  port list wxWidgets
+  567  ls
+  568  pwd
+  569  cd ..
+  570  rm mybuild
+  571  rm -rf mybuild/
+  572  ls
+  573  ls
+  574  ls -l
+  575  wx
+  576  ls
+  577  cd ..
+  578  ls
+  579  rm -rf wxhaskell-0.11.1.2/
+  580  ls
+  581  man wx
+  582  ls
+  583  pwd
+  584  git checkout https://github.com/wxHaskell/wxHaskell.git
+  585  git get https://github.com/wxHaskell/wxHaskell.git
+  586  git clone https://github.com/wxHaskell/wxHaskell.git
+  587  ls
+  588  cd wxHaskell/
+  589  ls
+  590  cat install.txt
+  591  ls
+  592  configure
+  593  ./configure
+  594  export LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
+  595  ./configure
+  596  ls
+  597  ls
+  598  ls -l
+  599  cd wx
+  600  ls
+  601  cat Setup.lhs 
+  602  ls src
+  603  ls
+  604  pwd
+  605  cd samples
+  606  ls
+  607  cd ..
+  608  ls
+  609  cat install.txt
+  610  cabal update
+  611  cd wxdirect
+  612  cabal install
+  613  cd ../wxc
+  614  cabal install
+  615  ls
+  616  cd ..
+  617  ls
+  618  echo $LD_LIBRARY_PATH 
+  619  wx-config
+  620  wxconfig
+  621  wxConfig
+  622  wxConfig
+  623  wx-config
+  624  ls
+  625  ls
+  626  ls -l
+  627  cd debian/
+  628  ls
+  629  cat register.sh 
+  630  ls
+  631  ls -l
+  632  cat control
+  633  cd ..
+  634  ls
+  635  ls /usr/bin
+  636  ls /usr/bin
+  637  ls /sbin
+  638  find / wx-config
+  639  man find
+  640  find / -name "wx*" -print
+  641  find /usr/bin -name "wx*" -print
+  642  ls /
+  643  find /bin -name "wx*" -print
+  644  find /sbin -name "wx*" -print
+  645  find /usr -name "wx*" -print
+  646  ls /usr/local
+  647  find /usr/local/bin -name "wx*" -print
+  648  ls /usr/local/Qt4.6
+  649  qmake
+  650  ls
+  651  cd ..
+  652  ls
+  653  cabal gtk3
+  654  cabal install gtk3
+  655  pwd
+  656  pwd
+  657  ls
+  658  pwd
+  659  sudo port install gobject-introspection webkit-gtk3 webkit2-gtk gtksourceview3 gtk-osx-application-gtk3 adwaita-icon-theme
+  660  sudo port install gobject-introspection webkit-gtk3 webkit2-gtk gtksourceview3 gtk-osx-application-gtk3 adwaita-icon-theme
+  661  cd /opt/local/var/macports/logs/
+  662  ls
+  663  cd _opt_local_var_macports_sources_rsync.macports.org_release_tarballs_ports_devel_gmp
+  664  ls
+  665  cd gmp/
+  666  ls
+  667  head main.log
+  668  more main.log 
+  669  ls
+  670  ls -l
+  671  tail main.log 
+  672  tail 200 main.log 
+  673  tail -200 main.log 
+  674  ls
+  675  pwd
+  676  cd ..
+  677  cd /opt
+  678  ls
+  679  cd local
+  680  ls
+  681  ls src
+  682  ls bin
+  683  ls
+  684  ls var
+  685  cd var 
+  686  cd macports/
+  687  ls
+  688  ls sources/
+  689  ls software/
+  690  cd software/
+  691  ls
+  692  cd gmp/
+  693  ls
+  694  ls
+  695  cd ..
+  696  ls
+  697  ls
+  698  cd ..
+  699  ls
+  700  ls -l
+  701  cd build
+  702  ls
+  703  cd _opt_local_var_macports_sources_rsync.macports.org_release_tarballs_ports_devel_gmp
+  704  ls
+  705  cd gmp
+  706  ls
+  707  ls
+  708  cd work
+  709  ls
+  710  cd gmp-6.1.2/
+  711  ls
+  712  cat config.in
+  713  grep m4 config.in
+  714  grep M4 config.in
+  715  ls
+  716  cd ~
+  717  ls
+  718  brew
+  719  /usr/bin/ruby --version
+  720  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  721  brew install gtk+3
+  722  which wget
+  723  brew install wget
+  724  which wget
+  725  ls -l bin
+  726  pd
+  727  pwd
+  728  ls
+  729  ls bni
+  730  ls bin
+  731  ls -l bin
+  732  cd /usr/local
+  733  ls
+  734  ls -l bin
+  735  find Cellar
+  736  ls
+  737  pwd
+  738  cd ~
+  739  ls
+  740  cabal update
+  741  cabal install alex happy
+  742  cabal install haskell-gi
+  743  echo $PKG_CONFIG_PATH
+  744  ls /usr/local/Cellar
+  745  ls /usr/local/Cellar/libffi
+  746  ls /usr/local/Cellar/libffi/3.2.1/
+  747  ls /usr/local/Cellar/libffi/3.2.1/lib/
+  748  ls /usr/local/Cellar/libffi/3.2.1/lib/pkgconfig/
+  749  ls
+  750  pwd
+  751  export PKG_CONFIG_PATH=/usr/local/Cellar/libffi/3.2.1/lib/pkgconfig
+  752  echo $PKG_CONFIG_PATH
+  753  cabal install haskell-gi
+  754  echp $PATH
+  755  echo $PATH
+  756  ls
+  757  vi ~/.bash_login
+  758  source .bash_login
+  759  ls
+  760  ls -l .*
+  761  ls .*
+  762  ls -a
+  763  cat .bash_profile
+  764  cabal install haskell-gi
+  765  ls
+  766  ls
+  767  git clone https://github.com/gtk2hs/gtk2hs.git
+  768  ls
+  769  cd gtk2hs/
+  770  ls
+  771  cat INSTALL
+  772  ls
+  773  cd gtk
+  774  ls
+  775  cd demo
+  776  ls
+  777  cd hello
+  778  ls
+  779  cat Makefile 
+  780  make
+  781  echo $PATH
+  782  LS
+  783  CD ..
+  784  cd ..
+  785  ls
+  786  cat demos.txt
+  787  more demos.txt 
+  788  ls
+  789  cd ..
+  790  ls
+  791  cd ..
+  792  ls
+  793  ls
+  794  cd ..
+  795  cd ..
+  796  ls
+  797  cd mark/
+  798  ls
+  799  ls
+  800  pwd
+  801  cabal install cabal-install
+  802  caball --version
+  803  cabal --version
+  804  cabal install gi-gtk
+  805  cabal install gi-gtk
+  806  ls
+  807  pwd
+  808  ls
+  809  ghc -o hello hello.hs
+  810  ls foochess/
+  811  ls
+  812  mv hello.hs foochess/
+  813  cd foo
+  814  cd foochess/
+  815  ls
+  816  ghc -o hello hello.hs
+  817  ghc -v -o hello hello.hs
+  818  ls
+  819  pwd
+  820  make -n
+  821  make
+  822  ls
+  823  ./tests
+  824  ls
+  825  cd ~
+  826  ls
+  827  sudo port -f uninstall installed
+  828  pwd
+  829  port
+  830  echo
+  831  echo $PATH
+  832  sudo rm -rf /opt/local
+  833  sudo rm -rf /Applications/DarwinPorts
+  834  sudo rm -rf /Applications/MacPorts
+  835  sudo rm -rf /Library/LaunchDaemons/org.macports.*
+  836  sudo rm -rf /Library/Receipts/DawinPorts*.pkg
+  837  sudo rm -rf /Library/Receipts/MacPorts*.pkg
+  838  sudo rm -rf /Library/StartupItems/DarwinPortsStartup
+  839  sudo rm -rf /Library/Tcl/darwinports1.0
+  840  sudo rm -rf /Library/Tcl/macports1.0 
+  841  sudo rm -rf ~/.macports
+  842  echo $PATH
+  843  brew install wget
+  844  ls
+  845  pwd
+  846  cabal install haskell-gi
+  847  cd foochess/
+  848  ghc -v -o hello hello.hs
+  849  ghc -o hello hello.hs
+  850  ls
+  851  pwd
+  852  ls
+  853  cd ..
+  854  ls
+  855  ghc -o hello hello.hs
+  856  echo $PATH
+  857  pwd
+  858  cabal install gtk2hs-buildtools
+  859  cabal install gtk
+  860  ls
+  861  brew cask install xquartz
+  862  brew install glib cairo gtk gettext fontconfig freetype
+  863  export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:
+  864  cabal install alex happy
+  865  cabal install gtk2hs-buildtools
+  866  cabal install glib
+  867  cabal install gtk -f have-quartz-gtk
+  868  pwd
+  869  ls
+  870  file cabal.sandbox.config 
+  871  cat cabal.sandbox.config 
+  872  ls
+  873  ls
+  874  vi .bash_login
+  875  ls
+  876  echo $PKG_CONFIG_PATH 
+  877  ls -a
+  878  mv .cabal-sandbox .cabal-sandbox.old
+  879  ls
+  880  cabal install alex happy
+  881  rm cabal.sandbox.config 
+  882  ls
+  883  cabal sandbox
+  884  cabal sandbox init
+  885  cabal install --only-dependencies
+  886  cabal install alex happy
+  887  cabal install gtk2hs-buildtools
+  888  cabal install glib
+  889  cabal install gtk -f have-quartz-gtk
+  890  cabal install yesod-test
+  891  cabal install gtk2hs-buildtools
+  892  cabal install gtk -f have-quartz-gtk
+  893  ls
+  894  ghc -o hello hello.hs
+  895  ls
+  896  cd gtk2hs/
+  897  ls
+  898  cd demo
+  899  cd gtk
+  900  ls
+  901  cd demo
+  902  ls
+  903  hello
+  904  cd hello/
+  905  ls
+  906  make
+  907  ls
+  908  cat World.hs 
+  909  make -v
+  910  make -n
+  911  ghc -v --make World.hs -o helloworld
+  912  ls /usr/lib/ghc
+  913  ls /usr/lib/
+  914  sudo cabal install gtk -f have-quartz-gtk
+  915  ghc -v --make World.hs -o helloworld
+  916  ls
+  917  ghc --make World.hs -o helloworld
+  918  make
+  919  ./helloworld 
+  920  ./helloworld 
+  921  ls
+  922  cat World.hs
+  923  cd ..
+  924  ls
+  925  cd graphic/
+  926  ls
+  927  cat Drawing.hs 
+  928  make
+  929  ls
+  930  ./drawing 
+  931  ls
+  932  cd ..
+  933  ls
+  934  cd buttonbox/
+  935  ls
+  936  make
+  937  cat ButtonBox.hs 
+  938  ls
+  939  ./buttonbox 
+  940  ls
+  941  cd ..
+  942  ls
+  943  cd menu/
+  944  ls
+  945  cat MenuDemo.hs 
+  946  ls
+  947  make
+  948  ls
+  949  ./menudemo 
+  950  ./combodemo 
+  951  cd ..
+  952  ls
+  953  cd carsim
+  954  ls
+  955  cat CarSim.hs 
+  956  ls
+  957  make
+  958  ls
+  959  cd ..
+  960  ls
+  961  cd filechooser/
+  962  ls
+  963  make
+  964  ./filechooser 
+  965  ls
+  966  cd ..
+  967  ls
+  968  cd notebook/
+  969  ls
+  970  make
+  971  ./notebook 
+  972  cd ..
+  973  ls
+  974  cd actionMenu/
+  975  ls
+  976  make
+  977  ./actionmenu 
+  978  cd ..
+  979  cd inputmethod/
+  980  ls
+  981  make
+  982  cd ..
+  983  cd stack/
+  984  ls
+  985  more stack.hs
+  986  make
+  987  ls
+  988  cd ..
+  989  ls
+  990  cd statusicon/
+  991  ls
+  992  make
+  993  ./statusIcon 
+  994  ./statusIcon 
+  995  ls
+  996  cd ..
+  997  ls
+  998  cd concurrent/
+  999  ls
+ 1000  make
+ 1001  ls
+ 1002  ./progress
+ 1003  cd ../fonts/
+ 1004  ls
+ 1005  make
+ 1006  ./fonts 
+ 1007  ls
+ 1008  cd ..
+ 1009  ls
+ 1010  history
+epiphany.home$ 
+
+
+----------------------
+Mark Karpov has a nice article on Creating a GUI application in
+Haskell.  Could have saved myself a lot of grief by following his
+advice sooner.  His comments on Available libraries are validated by
+my personal experience going down those other paths.
+
+His article points thorugh to the https://wiki.haskell.org/Gtk2Hs/Mac
+article that was so helpful.
+
+---------------------
+
+Next steps -- turn on Time Machine and make a backup.  Then turn on
+sophos to do some virus checking.
+
+---------------------
 
 

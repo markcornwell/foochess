@@ -12,8 +12,7 @@ A chess engine written in Haskell
 You will need the Glorious Glasgow Haskell Compilation System.
 You can download an installer for it from http://haskell.org.
 I had good experiences downloading the Haskell platform installer
-for Mac OS which includes the Cabal package installer.
-Linux, OS X, and Windows are suppored.
+for Mac OS. Linux, OS X, and Windows are suppored.
 
 
 ## USAGE
